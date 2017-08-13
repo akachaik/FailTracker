@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using FailTracker.Web.Filters;
 using FailTracker.Web.Models;
 using Microsoft.AspNet.Identity;
 
@@ -36,6 +37,7 @@ namespace FailTracker.Web.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
+        [Log("Created issue")]
         public ActionResult New(NewIssueForm form)
         {
             var userId = User.Identity.GetUserId();
@@ -48,6 +50,7 @@ namespace FailTracker.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Log("Viewed issue {id}")]
         public ActionResult View(int id)
         {
             var issue = _context.Issues.Find(id);
@@ -65,6 +68,7 @@ namespace FailTracker.Web.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
+        [Log("Deleted issue {id}")]
         public ActionResult Delete(int id)
         {
             var issue = _context.Issues.Find(id);

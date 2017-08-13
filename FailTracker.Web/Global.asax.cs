@@ -7,6 +7,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using FailTracker.Web.Infrastructure;
 using StructureMap;
+using StructureMap.TypeRules;
 
 namespace FailTracker.Web
 {
@@ -36,6 +37,18 @@ namespace FailTracker.Web
                     scan.WithDefaultConventions();
                     scan.With(new ControllerConvention());
                 });
+
+                cfg.For<IFilterProvider>()
+                    .Use(new StructureMapFilterProvider(() => Container ?? ObjectFactory.Container));
+
+                cfg.SetAllProperties(x =>
+                    x.Matching(p =>
+                        p.DeclaringType.CanBeCastTo(typeof(ActionFilterAttribute)) &&
+                        p.DeclaringType.Namespace.StartsWith("FailTracker") &&
+                        !p.PropertyType.IsPrimitive &&
+                        p.PropertyType != typeof(string)));
+
+
             });
         }
 
