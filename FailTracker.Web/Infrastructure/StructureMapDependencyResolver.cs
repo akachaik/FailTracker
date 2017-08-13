@@ -8,6 +8,13 @@ namespace FailTracker.Web.Infrastructure
 {
     public class StructureMapDependencyResolver : IDependencyResolver
     {
+        private readonly Func<IContainer> _containerFactory;
+
+        public StructureMapDependencyResolver(Func<IContainer> containerFactory)
+        {
+            _containerFactory = containerFactory;
+        }
+
         public object GetService(Type serviceType)
         {
             if (serviceType == null)
@@ -15,15 +22,17 @@ namespace FailTracker.Web.Infrastructure
                 return null;
             }
 
+            var container = _containerFactory();
+
             return serviceType.IsAbstract || serviceType.IsInterface
-                ? ObjectFactory.TryGetInstance(serviceType)
-                : ObjectFactory.GetInstance(serviceType);
+                ? container.TryGetInstance(serviceType)
+                : container.GetInstance(serviceType);
 
         }
 
         public IEnumerable<object> GetServices(Type serviceType)
         {
-            return ObjectFactory.GetAllInstances(serviceType).Cast<object>();
+            return _containerFactory().GetAllInstances(serviceType).Cast<object>();
         }
     }
 }

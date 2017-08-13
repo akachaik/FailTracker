@@ -29,5 +29,10 @@ namespace FailTracker.Web.Models
         {
             return new ApplicationDbContext();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
     }
 }

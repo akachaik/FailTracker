@@ -12,6 +12,13 @@ namespace FailTracker.Web
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+
+        public IContainer Container
+        {
+            get => (IContainer) HttpContext.Current.Items["_Container"];
+            set => HttpContext.Current.Items["_Container"] = value;
+        }
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -19,7 +26,7 @@ namespace FailTracker.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            DependencyResolver.SetResolver(new StructureMapDependencyResolver());
+            DependencyResolver.SetResolver(new StructureMapDependencyResolver(() => Container ?? ObjectFactory.Container));
 
             ObjectFactory.Configure(cfg =>
             {
@@ -29,6 +36,17 @@ namespace FailTracker.Web
                     scan.WithDefaultConventions();
                 });
             });
+        }
+
+        public void Application_BeginRequest()
+        {
+            Container = ObjectFactory.Container.GetNestedContainer();
+        }
+
+        public void Application_EndRequest()
+        {
+            Container.Dispose();
+            Container = null;
         }
     }
 }
