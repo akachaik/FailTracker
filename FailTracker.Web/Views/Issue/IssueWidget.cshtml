@@ -1,0 +1,22 @@
+﻿@model FailTracker.Web.Controllers.IssueSummaryViewModel[]
+
+
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <td>Subject</td>
+        <td>Created At</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var issue in Model)
+    {
+        <tr>
+            <td><a href="@Url.Action("View", new { id = issue.IssueId})">@issue.Subject</a>
+            
+            <td>@issue.CreatedAt</td>
+        </tr>
+
+    }
+</table>

@@ -1,0 +1,29 @@
+﻿@model FailTracker.Web.Controllers.IssueDetailsViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+@Model.Subject
+
+@using (Html.BeginForm("Delete", "Issue", new {id = Model.IssueId}))
+{
+    @Html.AntiForgeryToken()
+    <button id="delete" type="submit">Delete</button>
+}
+
+@section scripts
+{
+    <script>
+        $("#delete").click(function() {
+            if (confirm("Delete this issue")) {
+                return true;
+            }
+            return false;
+        });
+    </script>
+}
+
