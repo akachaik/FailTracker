@@ -34,6 +34,7 @@ namespace FailTracker.Web
                 {
                     scan.TheCallingAssembly();
                     scan.WithDefaultConventions();
+                    scan.With(new ControllerConvention());
                 });
             });
         }
