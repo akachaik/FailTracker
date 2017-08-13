@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using FailTracker.Web.Filters;
+using FailTracker.Web.Infrastructure;
 using FailTracker.Web.Models;
 using Microsoft.AspNet.Identity;
 
@@ -10,10 +11,12 @@ namespace FailTracker.Web.Controllers
     public class IssueController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICurrentUser _currentUser;
 
-        public IssueController(ApplicationDbContext context)
+        public IssueController(ApplicationDbContext context, ICurrentUser currentUser)
         {
             _context = context;
+            _currentUser = currentUser;
         }
 
         [ChildActionOnly]
@@ -40,10 +43,8 @@ namespace FailTracker.Web.Controllers
         [Log("Created issue")]
         public ActionResult New(NewIssueForm form)
         {
-            var userId = User.Identity.GetUserId();
-            var user = _context.Users.Find(userId);
 
-            _context.Issues.Add(entity: new Issue(user, form.Subject, form.Body));
+            _context.Issues.Add(new Issue(_currentUser.User, form.Subject, form.Body));
 
             _context.SaveChanges();
 
