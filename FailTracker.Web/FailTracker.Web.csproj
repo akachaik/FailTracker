@@ -220,6 +220,15 @@
     <Compile Include="Infrastructure\Tasks\IRunAtInit.cs" />
     <Compile Include="Infrastructure\Tasks\TaskRegistry.cs" />
     <Compile Include="Infrastructure\TransactionPerRequest.cs" />
+    <Compile Include="Migrations\201708130618307_InitialCreate.cs" />
+    <Compile Include="Migrations\201708130618307_InitialCreate.Designer.cs">
+      <DependentUpon>201708130618307_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708131153340_AddIssue.cs" />
+    <Compile Include="Migrations\201708131153340_AddIssue.Designer.cs">
+      <DependentUpon>201708131153340_AddIssue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Issue.cs" />
@@ -291,6 +300,9 @@
     <Content Include="Views\Issue\IssueWidget.cshtml" />
     <Content Include="Views\Issue\View.cshtml" />
     <Content Include="Views\Issue\New.cshtml" />
+    <Content Include="Views\Issue\YourIssuesWidget.cshtml" />
+    <Content Include="Views\Issue\CreatedByYouWidget.cshtml" />
+    <Content Include="Views\Issue\AssignmentStatsWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -307,6 +319,14 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201708130618307_InitialCreate.resx">
+      <DependentUpon>201708130618307_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708131153340_AddIssue.resx">
+      <DependentUpon>201708131153340_AddIssue.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

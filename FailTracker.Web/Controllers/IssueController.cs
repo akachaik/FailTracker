@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Data.Entity;
 using System.Web.Mvc;
+using AutoMapper.QueryableExtensions;
 using FailTracker.Web.Filters;
 using FailTracker.Web.Infrastructure;
 using FailTracker.Web.Models;
@@ -24,16 +25,10 @@ namespace FailTracker.Web.Controllers
         [ChildActionOnly]
         public ActionResult YourIssuesWidget()
         {
-            var models = from i in _context.Issues
-                where i.AssignedTo.Id == _currentUser.User.Id
-                select new IssueSummaryViewModel
-                {
-                    IssueId = i.IssueId,
-                    Subject = i.Subject,
-                    Type = i.IssueType,
-                    CreatedAt = i.CreatedAt,
-                    Creator = i.Creator.UserName
-                };
+            var models = _context.Issues
+                .Where(i => i.AssignedTo.Id == _currentUser.User.Id)
+                .Project().To<IssueSummaryViewModel>();
+
 
             return PartialView(models.ToArray());
 

@@ -1,0 +1,27 @@
+﻿@model FailTracker.Web.Controllers.AssignmentStatsViewModel[]
+
+
+<table>
+    <thead>
+    <tr>
+        <td>User</td>
+
+        <td>Bugs</td>
+        <td>Enhancement</td>
+        <td>Support</td>
+        <td>Other</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var issue in Model)
+    {
+        <tr>
+            <td>@issue.UserName</td>
+            <td>@issue.Bugs</td>
+            <td>@issue.Enhancements</td>
+            <td>@issue.Support</td>
+            <td>@issue.Other</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,20 @@
+﻿@model FailTracker.Web.Controllers.IssueSummaryViewModel[]
+
+
+<table>
+    <thead>
+    <tr>
+        <td>Subject</td>
+        <td>Created At</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var issue in Model)
+    {
+        <tr>
+            <td>@issue.Subject</td>
+            <td>@issue.CreatedAt</td>
+        </tr>
+    }
+    </tbody>
+</table>
