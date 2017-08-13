@@ -31,24 +31,10 @@ namespace FailTracker.Web
 
             ObjectFactory.Configure(cfg =>
             {
-                cfg.Scan(scan =>
-                {
-                    scan.TheCallingAssembly();
-                    scan.WithDefaultConventions();
-                    scan.With(new ControllerConvention());
-                });
 
-                cfg.For<IFilterProvider>()
-                    .Use(new StructureMapFilterProvider(() => Container ?? ObjectFactory.Container));
-
-                cfg.SetAllProperties(x =>
-                    x.Matching(p =>
-                        p.DeclaringType.CanBeCastTo(typeof(ActionFilterAttribute)) &&
-                        p.DeclaringType.Namespace.StartsWith("FailTracker") &&
-                        !p.PropertyType.IsPrimitive &&
-                        p.PropertyType != typeof(string)));
-
-
+                cfg.AddRegistry(new StandardRegistry());
+                cfg.AddRegistry(new ControllerRegistry());
+                cfg.AddRegistry(new ActionFilterRegistry(() => Container ?? ObjectFactory.Container));
             });
         }
 
