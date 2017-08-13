@@ -14,7 +14,7 @@ namespace FailTracker.Web.Models
         }
         public Issue(ApplicationUser user, string subject, string body)
         {
-            CreatedBy = user;
+            Creator = user;
             Subject = subject;
             Body = body;
             CreatedAt = DateTime.Now;
@@ -25,6 +25,18 @@ namespace FailTracker.Web.Models
         public string Body { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public  ApplicationUser CreatedBy { get; set; }
+        public  ApplicationUser Creator { get; set; }
+
+        public IssueType IssueType { get; set; }
+
+        public ApplicationUser AssignedTo { get; set; }
+    }
+
+    public enum IssueType
+    {
+        Bug,
+        Other,
+        Enhancement,
+        Support
     }
 }

@@ -17,6 +17,8 @@ namespace FailTracker.Web.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        public System.Collections.Generic.List<Issue> Assignments { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
