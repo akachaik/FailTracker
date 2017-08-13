@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using FailTracker.Web.Infrastructure;
+using StructureMap;
 
 namespace FailTracker.Web
 {
@@ -16,6 +18,17 @@ namespace FailTracker.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            DependencyResolver.SetResolver(new StructureMapDependencyResolver());
+
+            ObjectFactory.Configure(cfg =>
+            {
+                cfg.Scan(scan =>
+                {
+                    scan.TheCallingAssembly();
+                    scan.WithDefaultConventions();
+                });
+            });
         }
     }
 }
