@@ -8,6 +8,11 @@ using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
 using StructureMap.Configuration.DSL;
+using Microsoft.AspNet.Identity;
+using FailTracker.Web.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Data.Entity;
+using Microsoft.Owin.Security;
 
 namespace FailTracker.Web.Infrastructure
 {
@@ -24,6 +29,13 @@ namespace FailTracker.Web.Infrastructure
                 .Use(() => new HttpContextWrapper(HttpContext.Current));
             For<HttpServerUtilityBase>()
                 .Use(() => new HttpServerUtilityWrapper(HttpContext.Current.Server));
+
+            For<IUserStore<ApplicationUser>>()
+                .Use<UserStore<ApplicationUser>>();
+            For<DbContext>()
+                .Use(() => new ApplicationDbContext());
+            For<IAuthenticationManager>()
+                .Use(() => HttpContext.Current.GetOwinContext().Authentication);
         }
     }
 }

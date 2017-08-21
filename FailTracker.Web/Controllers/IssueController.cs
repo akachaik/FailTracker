@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Data.Entity;
@@ -25,10 +26,19 @@ namespace FailTracker.Web.Controllers
         [ChildActionOnly]
         public ActionResult YourIssuesWidget()
         {
-            var models = _context.Issues
-                .Where(i => i.AssignedTo.Id == _currentUser.User.Id)
-                .Project().To<IssueSummaryViewModel>();
 
+            var issues = _context.Issues.AsQueryable();
+
+            if (_currentUser.User != null)
+            {
+                issues = issues.Where(i => i.AssignedTo.Id == _currentUser.User.Id);
+            }
+            else
+            {
+                issues = new List<Issue>().AsQueryable();
+            }
+
+            var models = issues.Project().To<IssueSummaryViewModel>();
 
             return PartialView(models.ToArray());
 
@@ -37,16 +47,18 @@ namespace FailTracker.Web.Controllers
         [ChildActionOnly]
         public ActionResult CreatedByYouWidget()
         {
-            var models = from i in _context.Issues
-                where i.Creator.Id == _currentUser.User.Id
-                select new IssueSummaryViewModel
-                {
-                    IssueId = i.IssueId,
-                    Subject = i.Subject,
-                    Type = i.IssueType,
-                    CreatedAt = i.CreatedAt,
-                    AssignedTo = i.AssignedTo.Id
-                };
+            var issues = _context.Issues.AsQueryable();
+
+            if (_currentUser.User != null)
+            {
+                issues = issues.Where(i => i.Creator.Id == _currentUser.User.Id).AsQueryable();
+            }
+            else
+            {
+                issues = new List<Issue>().AsQueryable();
+            }
+
+            var models = issues.Project().To<IssueSummaryViewModel>();
 
             return PartialView(models.ToArray());
 
@@ -165,11 +177,15 @@ namespace FailTracker.Web.Controllers
 
     public class IssueSummaryViewModel
     {
+        public IssueSummaryViewModel()
+        {
+            
+        }
         public int IssueId { get; set; }
         public DateTime CreatedAt { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
-        public IssueType Type { get; set; }
+        public IssueType IssueType { get; set; }
         public string Creator { get; set; }
         public string AssignedTo { get; set; }
     }
