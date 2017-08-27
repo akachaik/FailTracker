@@ -6,6 +6,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FailTracker.Web.Filters;
 using FailTracker.Web.Infrastructure;
+using FailTracker.Web.Infrastructure.Alerts;
 using FailTracker.Web.Infrastructure.Mapping;
 using FailTracker.Web.Models;
 using Microsoft.Web.Mvc;
@@ -107,8 +108,9 @@ namespace FailTracker.Web.Controllers
             _context.Issues.Add(new Issue(_currentUser.User, form.Subject, form.Body));
 
             _context.SaveChanges();
-           
-            return this.RedirectToAction<HomeController>(c => c.Index());
+
+            return this.RedirectToAction<HomeController>(c => c.Index())
+                .WithSuccess("Issue created!");
         }
 
         [Log("Viewed issue {id}")]
@@ -121,7 +123,8 @@ namespace FailTracker.Web.Controllers
 
             if (issue == null)
             {
-                throw new ApplicationException("Issue not found!");
+                return this.RedirectToAction<HomeController>(c => c.Index())
+                    .WithError("Unable to find the issue. Maybe it was deleted");
             }
 
             return View(issue);
@@ -135,13 +138,15 @@ namespace FailTracker.Web.Controllers
 
             if (issue==null)
             {
-                throw new ApplicationException("Issue not found!");
+                return this.RedirectToAction<HomeController>(c => c.Index())
+                    .WithError("Unable to find the issue. Maybe it was deleted");
             }
 
             _context.Issues.Remove(issue);
             _context.SaveChanges();
 
-            return this.RedirectToAction<HomeController>(c => c.Index());
+            return this.RedirectToAction<HomeController>(c => c.Index())
+                .WithSuccess("Issue deleted!");
         }
 
         [Log("Started to edit issue {id}")]
@@ -171,7 +176,8 @@ namespace FailTracker.Web.Controllers
 
             if (issue == null)
             {
-                throw new ApplicationException("Issue not found");
+                return this.RedirectToAction<HomeController>(c => c.Index())
+                    .WithError("Unable to find the issue. Maybe it was deleted");
             }
 
             var assignedToUser = _context.Users.Single(u => u.Id == form.AssignedToId);
@@ -181,7 +187,8 @@ namespace FailTracker.Web.Controllers
             issue.Body = form.Body;
             issue.IssueType = form.IssueType;
 
-            return this.RedirectToAction(c => c.View(form.IssueId));
+            return this.RedirectToAction(c => c.View(form.IssueId))
+                .WithSuccess("Changes saved!");
         }
 
         private SelectListItem[] GetAvailableIssueTypes()
