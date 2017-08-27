@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
 using System.Web.Mvc;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FailTracker.Web.Filters;
 using FailTracker.Web.Infrastructure;
+using FailTracker.Web.Infrastructure.Mapping;
 using FailTracker.Web.Models;
 
 namespace FailTracker.Web.Controllers
@@ -175,7 +177,7 @@ namespace FailTracker.Web.Controllers
         }
     }
 
-    public class EditIssueForm
+    public class EditIssueForm : IMapFrom<Issue>
     {
         public int IssueId { get; set; }
         public string Subject { get; set; }
@@ -187,16 +189,29 @@ namespace FailTracker.Web.Controllers
         public string Body { get; set; }
     }
 
-    public class AssignmentStatsViewModel
+    public class AssignmentStatsViewModel : IHaveCustomMappings
     {
         public string UserName { get; set; }
         public int Enhancements { get; set; }
         public int Bugs { get; set; }
         public int Support { get; set; }
         public int Other { get; set; }
+
+        public void CreateMappings(IConfiguration configuration)
+        {
+            configuration.CreateMap<ApplicationUser, AssignmentStatsViewModel>()
+                .ForMember(m => m.Enhancements, opt =>
+                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Enhancement)))
+                .ForMember(m => m.Bugs, opt =>
+                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Bug)))
+                .ForMember(m => m.Support, opt =>
+                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Support)))
+                .ForMember(m => m.Other, opt =>
+                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Other)));
+        }
     }
 
-    public class IssueDetailsViewModel
+    public class IssueDetailsViewModel : IMapFrom<Issue>
     {
         public int IssueId { get; set; }
         public string Subject { get; set; }
@@ -211,7 +226,7 @@ namespace FailTracker.Web.Controllers
         public string Body { get; set; }
     }
 
-    public class IssueSummaryViewModel
+    public class IssueSummaryViewModel : IMapFrom<Issue>
     {
         public IssueSummaryViewModel()
         {

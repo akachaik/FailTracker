@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using FailTracker.Web.Controllers;
+using FailTracker.Web.Infrastructure.Mapping;
 using FailTracker.Web.Infrastructure.Tasks;
 using FailTracker.Web.Models;
 
@@ -14,21 +16,47 @@ namespace FailTracker.Web
     {
         public void Execute()
         {
-            Mapper.CreateMap<Issue, IssueSummaryViewModel>();
+            var types = Assembly.GetExecutingAssembly().GetExportedTypes();
 
-            Mapper.CreateMap<Issue, IssueDetailsViewModel>();
-             
-            Mapper.CreateMap<Issue, EditIssueForm>();
+            LoadStarndardMappings(types);
+            LoadCustomMappings(types);
+        }
 
-            Mapper.CreateMap<ApplicationUser, AssignmentStatsViewModel>()
-                .ForMember(m => m.Enhancements, opt =>
-                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Enhancement)))
-                .ForMember(m => m.Bugs, opt =>
-                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Bug)))
-                .ForMember(m => m.Support, opt =>
-                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Support)))
-                .ForMember(m => m.Other, opt =>
-                    opt.MapFrom(u => u.Assignments.Count(i => i.IssueType == IssueType.Other)));
+        private void LoadCustomMappings(IEnumerable<Type> types)
+        {
+            var maps = (from t in types
+                from i in t.GetInterfaces()
+                where typeof(IHaveCustomMappings).IsAssignableFrom(t) &&
+                      !t.IsAbstract &&
+                      !t.IsInterface
+                select (IHaveCustomMappings) Activator.CreateInstance(t)).ToArray();
+
+            foreach (var map in maps)
+            {
+                map.CreateMappings(Mapper.Configuration);
+            }
+
+        }
+
+        private void LoadStarndardMappings(IEnumerable<Type> types)
+        {
+            var maps = (from t in types
+                from i in t.GetInterfaces()
+                where i.IsGenericType &&
+                      i.GetGenericTypeDefinition() == typeof(IMapFrom<>) &&
+                      !t.IsAbstract &&
+                      !t.IsInterface
+                select new
+                {
+                    Source = i.GetGenericArguments()[0],
+                    Destination = t
+                }).ToArray();
+
+            foreach (var map in maps)
+            {
+                Mapper.CreateMap(map.Source, map.Destination);
+            }
+
         }
     }
 }
