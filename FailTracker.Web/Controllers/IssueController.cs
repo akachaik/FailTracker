@@ -13,7 +13,7 @@ using Microsoft.Web.Mvc;
 
 namespace FailTracker.Web.Controllers
 {
-    public class IssueController : Controller
+    public class IssueController : FailTrackerController
     {
         private readonly ApplicationDbContext _context;
         private readonly ICurrentUser _currentUser;
@@ -109,7 +109,7 @@ namespace FailTracker.Web.Controllers
 
             _context.SaveChanges();
 
-            return this.RedirectToAction<HomeController>(c => c.Index())
+            return RedirectToAction<HomeController>(c => c.Index())
                 .WithSuccess("Issue created!");
         }
 
@@ -123,7 +123,7 @@ namespace FailTracker.Web.Controllers
 
             if (issue == null)
             {
-                return this.RedirectToAction<HomeController>(c => c.Index())
+                return RedirectToAction<HomeController>(c => c.Index())
                     .WithError("Unable to find the issue. Maybe it was deleted");
             }
 
@@ -138,14 +138,14 @@ namespace FailTracker.Web.Controllers
 
             if (issue==null)
             {
-                return this.RedirectToAction<HomeController>(c => c.Index())
+                return RedirectToAction<HomeController>(c => c.Index())
                     .WithError("Unable to find the issue. Maybe it was deleted");
             }
 
             _context.Issues.Remove(issue);
             _context.SaveChanges();
 
-            return this.RedirectToAction<HomeController>(c => c.Index())
+            return RedirectToAction<HomeController>(c => c.Index())
                 .WithSuccess("Issue deleted!");
         }
 
@@ -176,7 +176,7 @@ namespace FailTracker.Web.Controllers
 
             if (issue == null)
             {
-                return this.RedirectToAction<HomeController>(c => c.Index())
+                return RedirectToAction<HomeController>(c => c.Index())
                     .WithError("Unable to find the issue. Maybe it was deleted");
             }
 

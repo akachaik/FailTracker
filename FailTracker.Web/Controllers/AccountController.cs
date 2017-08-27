@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using FailTracker.Web.Infrastructure;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -13,7 +14,7 @@ using FailTracker.Web.Models;
 namespace FailTracker.Web.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : FailTrackerController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
