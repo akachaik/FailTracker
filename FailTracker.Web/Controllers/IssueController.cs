@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.Management;
 using System.Web.Mvc;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -97,7 +99,7 @@ namespace FailTracker.Web.Controllers
 
         public ActionResult New()
         {
-            return View();
+            return View(new NewIssueForm());
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -206,7 +208,7 @@ namespace FailTracker.Web.Controllers
         }
     }
 
-    public class EditIssueForm : IMapFrom<Issue>
+    public class EditIssueForm : IMapFrom<Issue>, IHaveUserSelectList, IHaveIssueTypeSelectList
     {
         public int IssueId { get; set; }
         public string Subject { get; set; }
@@ -249,18 +251,29 @@ namespace FailTracker.Web.Controllers
         public string CreatorUserName { get; set; }
     }
 
-    public class NewIssueForm
+    public class NewIssueForm : IHaveUserSelectList, IHaveIssueTypeSelectList
     {
+        [Required]
         public string Subject { get; set; }
+
+        [Required]
+        [DataType(DataType.MultilineText)]
         public string Body { get; set; }
+
+        [Required]
+        [Display(Name = "Issue Type")]
+        public IssueType IssueType { get; set; }
+
+        [Required]
+        [Display(Name = "Assigned To")]
+        public string AssignedToUserId { get; set; }
+
+        public SelectListItem[] AvailableUsers { get; set; }
+        public SelectListItem[] AvailableIssueTypes { get; set; }
     }
 
     public class IssueSummaryViewModel : IMapFrom<Issue>
     {
-        public IssueSummaryViewModel()
-        {
-            
-        }
         public int IssueId { get; set; }
         public DateTime CreatedAt { get; set; }
         public string Subject { get; set; }

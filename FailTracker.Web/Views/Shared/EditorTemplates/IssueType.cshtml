@@ -1,0 +1,13 @@
+﻿@using FailTracker.Web.Models
+@model FailTracker.Web.Models.IssueType
+@{
+    var options = Enum.GetValues(typeof(IssueType))
+        .Cast<IssueType>()
+        .Select(t => new SelectListItem
+        {
+            Text = t.ToString(),
+            Value = t.ToString(),
+            Selected = t == Model
+        });
+}
+@Html.DropDownList("", options , new { @class = "form-control"})
