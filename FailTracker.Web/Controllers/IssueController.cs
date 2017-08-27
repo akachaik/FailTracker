@@ -163,9 +163,6 @@ namespace FailTracker.Web.Controllers
                 throw new ApplicationException("Issue not found");
             }
 
-            form.AvailableUsers = GetAvailableUsers();
-            form.AvailableIssueTypes = GetAvailableIssueTypes();
-
             return View(form);
         }
 
@@ -208,15 +205,23 @@ namespace FailTracker.Web.Controllers
         }
     }
 
-    public class EditIssueForm : IMapFrom<Issue>, IHaveUserSelectList, IHaveIssueTypeSelectList
+    public class EditIssueForm : IMapFrom<Issue>
     {
         public int IssueId { get; set; }
+
+        [Required]
         public string Subject { get; set; }
+
+        [Display(Name = "Assigned To")]
+        [DataType("UserId")]
         public string AssignedToId { get; set; }
-        public SelectListItem[] AvailableUsers { get; set; }
         public string CreatorUserName { get; set; }
+
+        [Display(Name = "Issue Type")]
         public IssueType IssueType { get; set; }
-        public SelectListItem[] AvailableIssueTypes { get; set; }
+
+        [Required]
+        [DataType(DataType.MultilineText)]
         public string Body { get; set; }
     }
 
