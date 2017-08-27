@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data.Entity;
 using System.Web.Mvc;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -9,6 +8,7 @@ using FailTracker.Web.Filters;
 using FailTracker.Web.Infrastructure;
 using FailTracker.Web.Infrastructure.Mapping;
 using FailTracker.Web.Models;
+using Microsoft.Web.Mvc;
 
 namespace FailTracker.Web.Controllers
 {
@@ -107,8 +107,8 @@ namespace FailTracker.Web.Controllers
             _context.Issues.Add(new Issue(_currentUser.User, form.Subject, form.Body));
 
             _context.SaveChanges();
-
-            return RedirectToAction("Index", "Home");
+           
+            return this.RedirectToAction<HomeController>(c => c.Index());
         }
 
         [Log("Viewed issue {id}")]
@@ -141,7 +141,7 @@ namespace FailTracker.Web.Controllers
             _context.Issues.Remove(issue);
             _context.SaveChanges();
 
-            return RedirectToAction("Index", "Home");
+            return this.RedirectToAction<HomeController>(c => c.Index());
         }
 
         [Log("Started to edit issue {id}")]
@@ -160,6 +160,28 @@ namespace FailTracker.Web.Controllers
             form.AvailableIssueTypes = GetAvailableIssueTypes();
 
             return View(form);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        [Log("Edited issue")]
+        public ActionResult Edit(EditIssueForm form)
+        {
+            var issue = _context.Issues
+                .SingleOrDefault(i => i.IssueId == form.IssueId);
+
+            if (issue == null)
+            {
+                throw new ApplicationException("Issue not found");
+            }
+
+            var assignedToUser = _context.Users.Single(u => u.Id == form.AssignedToId);
+
+            issue.Subject = form.Subject;
+            issue.AssignedTo = assignedToUser;
+            issue.Body = form.Body;
+            issue.IssueType = form.IssueType;
+
+            return this.RedirectToAction(c => c.View(form.IssueId));
         }
 
         private SelectListItem[] GetAvailableIssueTypes()
