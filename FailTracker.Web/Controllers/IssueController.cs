@@ -266,6 +266,7 @@ namespace FailTracker.Web.Controllers
 
         [Required]
         [Display(Name = "Assigned To")]
+        [DataType("UserId")]
         public string AssignedToUserId { get; set; }
 
         public SelectListItem[] AvailableUsers { get; set; }

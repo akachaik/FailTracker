@@ -1,0 +1,17 @@
+﻿@using FailTracker.Web.Domain
+@using FailTracker.Web.Infrastructure
+@using FailTracker.Web.Models
+@using Microsoft.AspNet.Identity.Owin
+@model string
+    
+@{
+    var userManager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+    var availableUsers = userManager.Users.Select(u => new SelectListItem
+    {
+        Text = u.UserName,
+        Value = u.Id    ,
+        Selected = u.Id == Model
+    });
+
+}
+@Html.DropDownList("", availableUsers, new { @class = "form-control"})
