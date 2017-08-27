@@ -12,7 +12,8 @@
 @using (Html.BeginForm("Delete", "Issue", new {id = Model.IssueId}))
 {
     @Html.AntiForgeryToken()
-    <button id="delete" type="submit">Delete</button>
+    <a href="@Url.Action("Edit", new { id = Model.IssueId})" class="btn btn-default">Edit</a>
+    <button id="delete" type="submit" class="btn btn-danger">Delete</button>
 }
 
 @section scripts

@@ -11,7 +11,7 @@
         @foreach (var issue in Model)
         {
             <tr>
-                <td><a href="@Url.Action("Edit", "Issue", new { id = issue.IssueId})">@issue.Subject</a></td>
+                <td><a href="@Url.Action("View", "Issue", new { id = issue.IssueId})">@issue.Subject</a></td>
                 <td>@issue.CreatedAt</td>
             </tr>
         }

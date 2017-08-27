@@ -113,8 +113,7 @@ namespace FailTracker.Web.Controllers
         public ActionResult View(int id)
         {
             var issue = _context.Issues
-                .Include(i => i.AssignedTo)
-                .Include(i => i.Creator)
+                .Project().To<IssueDetailsViewModel>()
                 .SingleOrDefault(i => i.IssueId == id);
 
 
@@ -123,12 +122,7 @@ namespace FailTracker.Web.Controllers
                 throw new ApplicationException("Issue not found!");
             }
 
-            return View(new IssueDetailsViewModel
-            {
-                IssueId = issue.IssueId,
-                Subject = issue.Subject,
-                CreatedAt = issue.CreatedAt,
-            });
+            return View(issue);
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -148,29 +142,22 @@ namespace FailTracker.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Log("Started to edit issue {id}")]
         public ActionResult Edit(int id)
         {
-            var issue = _context.Issues
-                .Include(i => i.AssignedTo)
-                .Include(i => i.Creator)
-                .SingleOrDefault(i => i.IssueId == id);
 
-            if (issue == null)
+            var form = _context.Issues
+                .Project().To<EditIssueForm>()
+                .SingleOrDefault(i => i.IssueId == id);
+            if (form == null)
             {
                 throw new ApplicationException("Issue not found");
             }
 
-            return View(new EditIssueForm
-            {
-                IssueId = issue.IssueId,
-                Subject = issue.Subject,
-                AssignedToUserId = issue.AssignedTo.Id,
-                AvailableUsers = GetAvailableUsers(),
-                Creator = issue.Creator.UserName,
-                IssueType = issue.IssueType,
-                AvailableIssueTypes = GetAvailableIssueTypes(),
-                Body = issue.Body
-            });
+            form.AvailableUsers = GetAvailableUsers();
+            form.AvailableIssueTypes = GetAvailableIssueTypes();
+
+            return View(form);
         }
 
         private SelectListItem[] GetAvailableIssueTypes()
@@ -192,9 +179,9 @@ namespace FailTracker.Web.Controllers
     {
         public int IssueId { get; set; }
         public string Subject { get; set; }
-        public string AssignedToUserId { get; set; }
+        public string AssignedToId { get; set; }
         public SelectListItem[] AvailableUsers { get; set; }
-        public string Creator { get; set; }
+        public string CreatorUserName { get; set; }
         public IssueType IssueType { get; set; }
         public SelectListItem[] AvailableIssueTypes { get; set; }
         public string Body { get; set; }
@@ -214,8 +201,8 @@ namespace FailTracker.Web.Controllers
         public int IssueId { get; set; }
         public string Subject { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string AssignedTo { get; set; }
-        public string Creator { get; set; }
+        public string AssignedToUserName { get; set; }
+        public string CreatorUserName { get; set; }
     }
 
     public class NewIssueForm
@@ -234,8 +221,8 @@ namespace FailTracker.Web.Controllers
         public DateTime CreatedAt { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
-        public IssueType Type { get; set; }
-        public string Creator { get; set; }
-        public string AssignedTo { get; set; }
+        public IssueType IssueType { get; set; }
+        public string CreatorUserName { get; set; }
+        public string AssignedToUserName { get; set; }
     }
 }

@@ -14,25 +14,11 @@ namespace FailTracker.Web
     {
         public void Execute()
         {
-            Mapper.CreateMap<Issue, IssueSummaryViewModel>()
-                .ForMember(m => m.Creator,
-                    opt => opt.MapFrom(i => i.Creator.UserName))
-                .ForMember(m => m.AssignedTo,
-                    opt=> opt.MapFrom(i => i.AssignedTo.UserName))
-                .ForMember(m => m.Type,
-                    opt => opt.MapFrom(i => i.IssueType));
+            Mapper.CreateMap<Issue, IssueSummaryViewModel>();
 
-            Mapper.CreateMap<Issue, IssueDetailsViewModel>()
-                .ForMember(m => m.AssignedTo,
-                    opt => opt.MapFrom(i => i.AssignedTo.UserName))
-                .ForMember(m => m.Creator,
-                    opt => opt.MapFrom(i => i.Creator.UserName));
+            Mapper.CreateMap<Issue, IssueDetailsViewModel>();
              
-            Mapper.CreateMap<Issue, EditIssueForm>()
-                .ForMember(m => m.AssignedToUserId,
-                    opt => opt.MapFrom(i => i.AssignedTo.Id))
-                .ForMember(m => m.Creator,
-                    opt => opt.MapFrom(i => i.Creator.UserName));
+            Mapper.CreateMap<Issue, EditIssueForm>();
 
             Mapper.CreateMap<ApplicationUser, AssignmentStatsViewModel>()
                 .ForMember(m => m.Enhancements, opt =>
