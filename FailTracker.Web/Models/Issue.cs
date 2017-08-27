@@ -12,12 +12,13 @@ namespace FailTracker.Web.Models
         {
             
         }
-        public Issue(ApplicationUser user, string subject, string body)
+        public Issue(ApplicationUser user, string subject, string body, ApplicationUser assignedToUser)
         {
             Creator = user;
             Subject = subject;
             Body = body;
             CreatedAt = DateTime.Now;
+            AssignedTo = assignedToUser;
         }
 
         public int IssueId { get; set; }

@@ -106,8 +106,8 @@ namespace FailTracker.Web.Controllers
         [Log("Created issue")]
         public ActionResult New(NewIssueForm form)
         {
-
-            _context.Issues.Add(new Issue(_currentUser.User, form.Subject, form.Body));
+            var assignedToUser = _context.Users.Find(form.AssignedToUserId);
+            _context.Issues.Add(new Issue(_currentUser.User, form.Subject, form.Body, assignedToUser));
 
             _context.SaveChanges();
 
@@ -251,7 +251,7 @@ namespace FailTracker.Web.Controllers
         public string CreatorUserName { get; set; }
     }
 
-    public class NewIssueForm : IHaveUserSelectList, IHaveIssueTypeSelectList
+    public class NewIssueForm
     {
         [Required]
         public string Subject { get; set; }
@@ -268,9 +268,6 @@ namespace FailTracker.Web.Controllers
         [Display(Name = "Assigned To")]
         [DataType("UserId")]
         public string AssignedToUserId { get; set; }
-
-        public SelectListItem[] AvailableUsers { get; set; }
-        public SelectListItem[] AvailableIssueTypes { get; set; }
     }
 
     public class IssueSummaryViewModel : IMapFrom<Issue>

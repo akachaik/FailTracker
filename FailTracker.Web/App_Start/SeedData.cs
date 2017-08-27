@@ -31,9 +31,9 @@ namespace FailTracker.Web
             {
                 var user = _context.Users.First();
 
-                _context.Issues.Add(new Issue(user, "Test Issue 1", "Test Issue Body 1"));
-                _context.Issues.Add(new Issue(user, "Test Issue 2", "Test Issue Body 2"));
-                _context.Issues.Add(new Issue(user, "Test Issue 3", "Test Issue Body 3"));
+                _context.Issues.Add(new Issue(user, "Test Issue 1", "Test Issue Body 1", _context.Users.First()));
+                _context.Issues.Add(new Issue(user, "Test Issue 2", "Test Issue Body 2", _context.Users.First()));
+                _context.Issues.Add(new Issue(user, "Test Issue 3", "Test Issue Body 3", _context.Users.First()));
 
                 _context.SaveChanges();
             }
