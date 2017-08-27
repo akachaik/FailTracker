@@ -312,6 +312,7 @@
     <Content Include="Views\Issue\YourIssuesWidget.cshtml" />
     <Content Include="Views\Issue\CreatedByYouWidget.cshtml" />
     <Content Include="Views\Issue\AssignmentStatsWidget.cshtml" />
+    <Content Include="Views\Issue\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

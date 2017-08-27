@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Data.Entity;
 using System.Web.Mvc;
 using AutoMapper.QueryableExtensions;
 using FailTracker.Web.Filters;
 using FailTracker.Web.Infrastructure;
 using FailTracker.Web.Models;
-using Microsoft.AspNet.Identity;
 
 namespace FailTracker.Web.Controllers
 {
@@ -150,7 +148,56 @@ namespace FailTracker.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-   
+        public ActionResult Edit(int id)
+        {
+            var issue = _context.Issues
+                .Include(i => i.AssignedTo)
+                .Include(i => i.Creator)
+                .SingleOrDefault(i => i.IssueId == id);
+
+            if (issue == null)
+            {
+                throw new ApplicationException("Issue not found");
+            }
+
+            return View(new EditIssueForm
+            {
+                IssueId = issue.IssueId,
+                Subject = issue.Subject,
+                AssignedToUserId = issue.AssignedTo.Id,
+                AvailableUsers = GetAvailableUsers(),
+                Creator = issue.Creator.UserName,
+                IssueType = issue.IssueType,
+                AvailableIssueTypes = GetAvailableIssueTypes(),
+                Body = issue.Body
+            });
+        }
+
+        private SelectListItem[] GetAvailableIssueTypes()
+        {
+            return Enum.GetValues(typeof(IssueType))
+                .Cast<IssueType>()
+                .Select(t => new SelectListItem {Text = t.ToString(), Value = t.ToString()})
+                .ToArray();
+
+        }
+
+        private SelectListItem[] GetAvailableUsers()
+        {
+            return _context.Users.Select(u => new SelectListItem {Text = u.UserName, Value = u.Id}).ToArray();
+        }
+    }
+
+    public class EditIssueForm
+    {
+        public int IssueId { get; set; }
+        public string Subject { get; set; }
+        public string AssignedToUserId { get; set; }
+        public SelectListItem[] AvailableUsers { get; set; }
+        public string Creator { get; set; }
+        public IssueType IssueType { get; set; }
+        public SelectListItem[] AvailableIssueTypes { get; set; }
+        public string Body { get; set; }
     }
 
     public class AssignmentStatsViewModel
@@ -167,6 +214,8 @@ namespace FailTracker.Web.Controllers
         public int IssueId { get; set; }
         public string Subject { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string AssignedTo { get; set; }
+        public string Creator { get; set; }
     }
 
     public class NewIssueForm
@@ -185,7 +234,7 @@ namespace FailTracker.Web.Controllers
         public DateTime CreatedAt { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
-        public IssueType IssueType { get; set; }
+        public IssueType Type { get; set; }
         public string Creator { get; set; }
         public string AssignedTo { get; set; }
     }
